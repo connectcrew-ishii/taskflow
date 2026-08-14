@@ -1,4 +1,5 @@
 """環境設定モジュールのテスト。"""
+
 from app.config import DEFAULT_DATABASE_URL, get_settings
 
 

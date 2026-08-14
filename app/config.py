@@ -2,6 +2,7 @@
 
 環境変数からDB接続情報等を読み込む。
 """
+
 from dataclasses import dataclass
 from functools import lru_cache
 import os
