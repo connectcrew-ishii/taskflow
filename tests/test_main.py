@@ -1,0 +1,14 @@
+"""FastAPIエントリーポイントの疎通テスト。"""
+from fastapi.testclient import TestClient
+
+from app.main import app
+
+client = TestClient(app)
+
+
+def test_health_check_returns_200():
+    """/health が200とステータスokを返すことを確認する。"""
+    response = client.get("/health")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}

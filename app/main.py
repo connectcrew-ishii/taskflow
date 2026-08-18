@@ -1,7 +1,8 @@
-"""TaskFlowアプリケーションのエントリーポイント（最小構成）。
-
-ルーター登録などの実装はIssue #05で行う。
-"""
+"""TaskFlowアプリケーションのエントリーポイント。"""
 from fastapi import FastAPI
 
+from app.routes import health
+
 app = FastAPI(title="TaskFlow")
+
+app.include_router(health.router)
