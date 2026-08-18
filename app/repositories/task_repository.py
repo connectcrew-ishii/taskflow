@@ -60,3 +60,16 @@ class TaskRepository:
         self._db.commit()
         self._db.refresh(task)
         return task
+
+    def update(self, task: Task) -> Task:
+        """既存タスクの変更を永続化する。
+
+        Args:
+            task: 属性を変更済みのTaskインスタンス（get_by_id等で取得したもの）。
+
+        Returns:
+            updated_atが更新された状態のTask。
+        """
+        self._db.commit()
+        self._db.refresh(task)
+        return task
