@@ -1,0 +1,37 @@
+"""TaskのDBアクセスを担当するリポジトリ。"""
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
+
+from app.models import Task
+
+
+class TaskRepository:
+    """Taskテーブルへのアクセスを提供する。"""
+
+    def __init__(self, db: Session) -> None:
+        self._db = db
+
+    def list(
+        self, limit: int, offset: int, order: str = "desc"
+    ) -> tuple[list[Task], int]:
+        """タスク一覧を登録日順で取得する。
+
+        Args:
+            limit: 取得件数の上限。
+            offset: 取得開始位置。
+            order: "desc"（新しい順、既定）または"asc"（古い順）。
+
+        Returns:
+            (該当ページのタスク一覧, 全件数) のタプル。
+        """
+        order_column = (
+            Task.created_at.desc() if order == "desc" else Task.created_at.asc()
+        )
+
+        items_stmt = select(Task).order_by(order_column).limit(limit).offset(offset)
+        items = list(self._db.scalars(items_stmt).all())
+
+        total_stmt = select(func.count()).select_from(Task)
+        total = self._db.scalar(total_stmt) or 0
+
+        return items, total
