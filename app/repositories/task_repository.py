@@ -46,3 +46,17 @@ class TaskRepository:
             該当するTask。存在しない場合はNone。
         """
         return self._db.get(Task, task_id)
+
+    def create(self, task: Task) -> Task:
+        """タスクを新規登録する。
+
+        Args:
+            task: 永続化するTaskインスタンス（id/created_at/updated_atは未設定でよい）。
+
+        Returns:
+            id・created_at・updated_atが確定した状態のTask。
+        """
+        self._db.add(task)
+        self._db.commit()
+        self._db.refresh(task)
+        return task
