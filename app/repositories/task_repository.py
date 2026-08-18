@@ -35,3 +35,14 @@ class TaskRepository:
         total = self._db.scalar(total_stmt) or 0
 
         return items, total
+
+    def get_by_id(self, task_id: str) -> Task | None:
+        """指定したIDのタスクを取得する。
+
+        Args:
+            task_id: タスクのUUID文字列。
+
+        Returns:
+            該当するTask。存在しない場合はNone。
+        """
+        return self._db.get(Task, task_id)
