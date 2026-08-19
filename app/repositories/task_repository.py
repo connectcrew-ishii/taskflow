@@ -73,3 +73,12 @@ class TaskRepository:
         self._db.commit()
         self._db.refresh(task)
         return task
+
+    def delete(self, task: Task) -> None:
+        """タスクを削除する。
+
+        Args:
+            task: 削除するTaskインスタンス（get_by_id等で取得したもの）。
+        """
+        self._db.delete(task)
+        self._db.commit()
