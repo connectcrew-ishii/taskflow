@@ -1,10 +1,10 @@
 """Task関連のAPIルーター。"""
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.repositories import TaskRepository
-from app.schemas import TaskListResponse
+from app.schemas import Task, TaskCreate, TaskListResponse
 from app.services import TaskService
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
@@ -24,3 +24,12 @@ def list_tasks(
     """タスク一覧を取得する（登録日の新しい順）。"""
     items, total = service.list_tasks(limit=limit, offset=offset)
     return TaskListResponse(items=items, total=total, limit=limit, offset=offset)
+
+
+@router.post("", response_model=Task, status_code=status.HTTP_201_CREATED)
+def create_task(
+    data: TaskCreate,
+    service: TaskService = Depends(get_task_service),
+) -> Task:
+    """タスクを新規登録する。"""
+    return service.create_task(data)
