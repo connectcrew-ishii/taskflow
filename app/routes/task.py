@@ -1,11 +1,11 @@
 """Task関連のAPIルーター。"""
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.repositories import TaskRepository
 from app.schemas import Task, TaskCreate, TaskListResponse
-from app.services import TaskService
+from app.services import TaskNotFoundError, TaskService
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -33,3 +33,17 @@ def create_task(
 ) -> Task:
     """タスクを新規登録する。"""
     return service.create_task(data)
+
+
+@router.get("/{task_id}", response_model=Task)
+def get_task(
+    task_id: str,
+    service: TaskService = Depends(get_task_service),
+) -> Task:
+    """指定したIDのタスクを取得する。"""
+    try:
+        return service.get_task(task_id)
+    except TaskNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+        ) from exc
