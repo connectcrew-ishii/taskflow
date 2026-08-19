@@ -34,6 +34,8 @@ target-version = "py313"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+# B008: FastAPIのDepends()はデフォルト引数で使うのが公式な書き方のため除外する
+ignore = ["B008"]
 
 [tool.black]
 line-length = 100
