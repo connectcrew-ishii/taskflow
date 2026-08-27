@@ -1,11 +1,28 @@
 """TaskのDBアクセスを担当するリポジトリ。"""
-
 from datetime import date
 
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
 from app.models import Task
+
+_PRIORITY_ORDER = case(
+    (Task.priority == "重要", 1),
+    (Task.priority == "高", 2),
+    (Task.priority == "中", 3),
+    (Task.priority == "低", 4),
+)
+
+
+def _resolve_order_by(sort: str):
+    """sort文字列に対応するSQLAlchemyの並び替え式を返す。"""
+    if sort == "created_at_asc":
+        return Task.created_at.asc()
+    if sort == "due_date_asc":
+        return Task.due_date.asc().nulls_last()
+    if sort == "priority_asc":
+        return _PRIORITY_ORDER.asc()
+    return Task.created_at.desc()
 
 
 class TaskRepository:
@@ -18,17 +35,18 @@ class TaskRepository:
         self,
         limit: int,
         offset: int,
-        order: str = "desc",
+        sort: str = "created_at_desc",
         status: str | None = None,
         priority: str | None = None,
         overdue: bool = False,
     ) -> tuple[list[Task], int]:
-        """タスク一覧を登録日順で取得する。
+        """タスク一覧を取得する。
 
         Args:
             limit: 取得件数の上限。
             offset: 取得開始位置。
-            order: "desc"（新しい順、既定）または"asc"（古い順）。
+            sort: "created_at_desc"(既定), "created_at_asc",
+                "due_date_asc", "priority_asc" のいずれか。
             status: 指定した場合、そのstatusのみに絞り込む。
             priority: 指定した場合、そのpriorityのみに絞り込む。
             overdue: Trueの場合、期限切れ（due_date < 今日 かつ 未完了）のみに絞り込む。
@@ -36,8 +54,6 @@ class TaskRepository:
         Returns:
             (該当ページのタスク一覧, 絞り込み後の全件数) のタプル。
         """
-        order_column = Task.created_at.desc() if order == "desc" else Task.created_at.asc()
-
         base_stmt = select(Task)
         count_stmt = select(func.count()).select_from(Task)
 
@@ -52,12 +68,15 @@ class TaskRepository:
         if overdue:
             today = date.today()
             overdue_condition = (
-                (Task.due_date.is_not(None)) & (Task.due_date < today) & (Task.status != "完了")
+                (Task.due_date.is_not(None))
+                & (Task.due_date < today)
+                & (Task.status != "完了")
             )
             base_stmt = base_stmt.where(overdue_condition)
             count_stmt = count_stmt.where(overdue_condition)
 
-        items_stmt = base_stmt.order_by(order_column).limit(limit).offset(offset)
+        order_by = _resolve_order_by(sort)
+        items_stmt = base_stmt.order_by(order_by).limit(limit).offset(offset)
         items = list(self._db.scalars(items_stmt).all())
 
         total = self._db.scalar(count_stmt) or 0

@@ -60,12 +60,12 @@ def test_list_orders_by_created_at_desc_by_default():
 
 
 def test_list_orders_by_created_at_asc_when_specified():
-    """order='asc'指定時は登録日の古い順に並ぶ。"""
+    """sort='created_at_asc'指定時は登録日の古い順に並ぶ。"""
     session = _make_session()
     _seed_tasks(session, 3)
     repo = TaskRepository(session)
 
-    items, _ = repo.list(limit=10, offset=0, order="asc")
+    items, _ = repo.list(limit=10, offset=0, sort="created_at_asc")
 
     assert items[0].title == "タスク1"
     assert items[-1].title == "タスク3"

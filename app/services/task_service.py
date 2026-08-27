@@ -15,7 +15,7 @@ class TaskService:
         self,
         limit: int,
         offset: int,
-        order: str = "desc",
+        sort: str = "created_at_desc",
         status: str | None = None,
         priority: str | None = None,
         overdue: bool = False,
@@ -24,7 +24,7 @@ class TaskService:
         return self._repository.list(
             limit=limit,
             offset=offset,
-            order=order,
+            sort=sort,
             status=status,
             priority=priority,
             overdue=overdue,

@@ -1,4 +1,6 @@
 """Task関連のAPIルーター。"""
+from typing import Literal
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
@@ -8,6 +10,10 @@ from app.schemas import Task, TaskCreate, TaskListResponse, TaskUpdate
 from app.services import TaskNotFoundError, TaskService
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
+
+SortOption = Literal[
+    "created_at_desc", "created_at_asc", "due_date_asc", "priority_asc"
+]
 
 
 def get_task_service(db: Session = Depends(get_db)) -> TaskService:
@@ -20,14 +26,16 @@ def list_tasks(
     status_filter: str | None = Query(default=None, alias="status"),
     priority: str | None = Query(default=None),
     overdue: bool = Query(default=False),
+    sort: SortOption = Query(default="created_at_desc"),
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     service: TaskService = Depends(get_task_service),
 ) -> TaskListResponse:
-    """タスク一覧を取得する（登録日の新しい順）。"""
+    """タスク一覧を取得する。"""
     items, total = service.list_tasks(
         limit=limit,
         offset=offset,
+        sort=sort,
         status=status_filter,
         priority=priority,
         overdue=overdue,
