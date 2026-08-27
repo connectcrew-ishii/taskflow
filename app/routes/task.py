@@ -35,6 +35,18 @@ def create_task(
     return service.create_task(data)
 
 
+@router.get("/search", response_model=TaskListResponse)
+def search_tasks(
+    q: str = Query(min_length=1, max_length=100),
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    service: TaskService = Depends(get_task_service),
+) -> TaskListResponse:
+    """タイトルの部分一致でタスクを検索する。"""
+    items, total = service.search_tasks(q=q, limit=limit, offset=offset)
+    return TaskListResponse(items=items, total=total, limit=limit, offset=offset)
+
+
 @router.get("/{task_id}", response_model=Task)
 def get_task(
     task_id: str,

@@ -82,3 +82,30 @@ class TaskRepository:
         """
         self._db.delete(task)
         self._db.commit()
+
+    def search(self, q: str, limit: int, offset: int) -> tuple[list[Task], int]:
+        """タイトルの部分一致でタスクを検索する（登録日新しい順）。
+
+        Args:
+            q: 検索語（タイトルに部分一致するもの）。
+            limit: 取得件数の上限。
+            offset: 取得開始位置。
+
+        Returns:
+            (該当ページのタスク一覧, 検索条件に一致する全件数) のタプル。
+        """
+        condition = Task.title.contains(q)
+
+        items_stmt = (
+            select(Task)
+            .where(condition)
+            .order_by(Task.created_at.desc())
+            .limit(limit)
+            .offset(offset)
+        )
+        items = list(self._db.scalars(items_stmt).all())
+
+        total_stmt = select(func.count()).select_from(Task).where(condition)
+        total = self._db.scalar(total_stmt) or 0
+
+        return items, total

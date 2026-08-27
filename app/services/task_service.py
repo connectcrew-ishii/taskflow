@@ -17,6 +17,10 @@ class TaskService:
         """タスク一覧を取得する。"""
         return self._repository.list(limit=limit, offset=offset, order=order)
 
+    def search_tasks(self, q: str, limit: int, offset: int) -> tuple[list[Task], int]:
+        """タイトルの部分一致でタスクを検索する。"""
+        return self._repository.search(q=q, limit=limit, offset=offset)
+
     def get_task(self, task_id: str) -> Task:
         """指定したIDのタスクを取得する。
 
