@@ -2,11 +2,14 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.routes import health, task
 from app.schemas import ErrorResponse
 
 app = FastAPI(title="TaskFlow")
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(health.router)
 app.include_router(task.router)
