@@ -17,12 +17,21 @@ def get_task_service(db: Session = Depends(get_db)) -> TaskService:
 
 @router.get("", response_model=TaskListResponse)
 def list_tasks(
+    status_filter: str | None = Query(default=None, alias="status"),
+    priority: str | None = Query(default=None),
+    overdue: bool = Query(default=False),
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     service: TaskService = Depends(get_task_service),
 ) -> TaskListResponse:
     """タスク一覧を取得する（登録日の新しい順）。"""
-    items, total = service.list_tasks(limit=limit, offset=offset)
+    items, total = service.list_tasks(
+        limit=limit,
+        offset=offset,
+        status=status_filter,
+        priority=priority,
+        overdue=overdue,
+    )
     return TaskListResponse(items=items, total=total, limit=limit, offset=offset)
 
 

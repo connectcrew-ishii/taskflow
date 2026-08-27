@@ -1,4 +1,7 @@
 """TaskのDBアクセスを担当するリポジトリ。"""
+
+from datetime import date
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -12,7 +15,13 @@ class TaskRepository:
         self._db = db
 
     def list(
-        self, limit: int, offset: int, order: str = "desc"
+        self,
+        limit: int,
+        offset: int,
+        order: str = "desc",
+        status: str | None = None,
+        priority: str | None = None,
+        overdue: bool = False,
     ) -> tuple[list[Task], int]:
         """タスク一覧を登録日順で取得する。
 
@@ -20,19 +29,38 @@ class TaskRepository:
             limit: 取得件数の上限。
             offset: 取得開始位置。
             order: "desc"（新しい順、既定）または"asc"（古い順）。
+            status: 指定した場合、そのstatusのみに絞り込む。
+            priority: 指定した場合、そのpriorityのみに絞り込む。
+            overdue: Trueの場合、期限切れ（due_date < 今日 かつ 未完了）のみに絞り込む。
 
         Returns:
-            (該当ページのタスク一覧, 全件数) のタプル。
+            (該当ページのタスク一覧, 絞り込み後の全件数) のタプル。
         """
-        order_column = (
-            Task.created_at.desc() if order == "desc" else Task.created_at.asc()
-        )
+        order_column = Task.created_at.desc() if order == "desc" else Task.created_at.asc()
 
-        items_stmt = select(Task).order_by(order_column).limit(limit).offset(offset)
+        base_stmt = select(Task)
+        count_stmt = select(func.count()).select_from(Task)
+
+        if status is not None:
+            base_stmt = base_stmt.where(Task.status == status)
+            count_stmt = count_stmt.where(Task.status == status)
+
+        if priority is not None:
+            base_stmt = base_stmt.where(Task.priority == priority)
+            count_stmt = count_stmt.where(Task.priority == priority)
+
+        if overdue:
+            today = date.today()
+            overdue_condition = (
+                (Task.due_date.is_not(None)) & (Task.due_date < today) & (Task.status != "完了")
+            )
+            base_stmt = base_stmt.where(overdue_condition)
+            count_stmt = count_stmt.where(overdue_condition)
+
+        items_stmt = base_stmt.order_by(order_column).limit(limit).offset(offset)
         items = list(self._db.scalars(items_stmt).all())
 
-        total_stmt = select(func.count()).select_from(Task)
-        total = self._db.scalar(total_stmt) or 0
+        total = self._db.scalar(count_stmt) or 0
 
         return items, total
 

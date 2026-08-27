@@ -12,10 +12,23 @@ class TaskService:
         self._repository = repository
 
     def list_tasks(
-        self, limit: int, offset: int, order: str = "desc"
+        self,
+        limit: int,
+        offset: int,
+        order: str = "desc",
+        status: str | None = None,
+        priority: str | None = None,
+        overdue: bool = False,
     ) -> tuple[list[Task], int]:
         """タスク一覧を取得する。"""
-        return self._repository.list(limit=limit, offset=offset, order=order)
+        return self._repository.list(
+            limit=limit,
+            offset=offset,
+            order=order,
+            status=status,
+            priority=priority,
+            overdue=overdue,
+        )
 
     def search_tasks(self, q: str, limit: int, offset: int) -> tuple[list[Task], int]:
         """タイトルの部分一致でタスクを検索する。"""
