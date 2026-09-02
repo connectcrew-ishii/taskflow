@@ -2,10 +2,8 @@
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
 
-from app.database import get_db
-from app.repositories import TaskRepository
+from app.dependencies import get_task_service
 from app.schemas import Task, TaskCreate, TaskListResponse, TaskUpdate
 from app.services import TaskNotFoundError, TaskService
 
@@ -14,11 +12,6 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"])
 SortOption = Literal[
     "created_at_desc", "created_at_asc", "due_date_asc", "priority_asc"
 ]
-
-
-def get_task_service(db: Session = Depends(get_db)) -> TaskService:
-    """依存注入用: TaskServiceを組み立てる。"""
-    return TaskService(TaskRepository(db))
 
 
 @router.get("", response_model=TaskListResponse)

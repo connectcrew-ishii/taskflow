@@ -78,3 +78,11 @@ class TaskService:
         """
         task = self.get_task(task_id)
         self._repository.delete(task)
+
+    def get_status_counts(self) -> dict[str, int]:
+        """状態ごとのタスク件数を取得する。"""
+        return self._repository.count_by_status()
+
+    def get_upcoming_tasks(self, limit: int = 5) -> list[Task]:
+        """期限が近い未完了タスクを取得する。"""
+        return self._repository.upcoming(limit=limit)

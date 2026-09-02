@@ -6,7 +6,7 @@ from datetime import date
 from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
-from app.models import Task
+from app.models import Task, TaskStatus
 
 _PRIORITY_ORDER = case(
     (Task.priority == "重要", 1),
@@ -158,3 +158,37 @@ class TaskRepository:
         total = self._db.scalar(total_stmt) or 0
 
         return items, total
+
+    def count_by_status(self) -> dict[str, int]:
+        """状態ごとのタスク件数を集計する（0件の状態も含む）。
+
+        Returns:
+            状態表示値をキー、件数を値とする辞書（TaskStatusの定義順）。
+        """
+        counts = {s.value: 0 for s in TaskStatus}
+
+        rows = self._db.execute(
+            select(Task.status, func.count()).group_by(Task.status)
+        ).all()
+        for status_value, count in rows:
+            counts[status_value] = count
+
+        return counts
+
+    def upcoming(self, limit: int = 5) -> list[Task]:
+        """期限が近い未完了タスクを取得する（期限昇順）。
+
+        Args:
+            limit: 取得件数の上限。
+
+        Returns:
+            期限が設定されており、かつ未完了のタスク一覧（期限が近い順）。
+        """
+        stmt = (
+            select(Task)
+            .where(Task.due_date.is_not(None))
+            .where(Task.status != "完了")
+            .order_by(Task.due_date.asc())
+            .limit(limit)
+        )
+        return list(self._db.scalars(stmt).all())
