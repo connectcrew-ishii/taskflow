@@ -47,7 +47,7 @@ def test_task_list_shows_placeholder_when_empty():
 
     response = client.get("/tasks-list")
 
-    assert "タスクがまだ登録されていません" in response.text
+    assert "条件に一致するタスクがありません" in response.text
 
     app.dependency_overrides.clear()
 

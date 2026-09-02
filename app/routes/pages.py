@@ -1,5 +1,5 @@
 """HTML画面用のルーター。"""
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import HTMLResponse
 
 from app.dependencies import get_task_service
@@ -25,10 +25,32 @@ def dashboard(
 @router.get("/tasks-list", response_class=HTMLResponse)
 def task_list_page(
     request: Request,
+    q: str | None = Query(default=None),
+    status_filter: str | None = Query(default=None, alias="status"),
+    priority: str | None = Query(default=None),
+    overdue: bool = Query(default=False),
     service: TaskService = Depends(get_task_service),
 ) -> HTMLResponse:
-    """タスク一覧画面を表示する。"""
-    items, total = service.list_tasks(limit=100, offset=0)
+    """タスク一覧画面を表示する（検索・フィルタ対応）。"""
+    if q:
+        items, total = service.search_tasks(q=q, limit=100, offset=0)
+    else:
+        items, total = service.list_tasks(
+            limit=100,
+            offset=0,
+            status=status_filter,
+            priority=priority,
+            overdue=overdue,
+        )
     return templates.TemplateResponse(
-        request, "task_list.html", {"items": items, "total": total}
+        request,
+        "task_list.html",
+        {
+            "items": items,
+            "total": total,
+            "q": q or "",
+            "status_filter": status_filter or "",
+            "priority": priority or "",
+            "overdue": overdue,
+        },
     )

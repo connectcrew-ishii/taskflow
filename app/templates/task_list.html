@@ -6,6 +6,52 @@
     <a href="/tasks-list/new" class="btn btn-primary">+ 新規登録</a>
 </div>
 
+<form method="get" action="/tasks-list" class="row g-2 mb-4">
+    <div class="col-12 col-md-4">
+        <input
+            type="text"
+            name="q"
+            class="form-control"
+            placeholder="キーワード検索"
+            value="{{ q }}"
+        >
+    </div>
+    <div class="col-6 col-md-2">
+        <select name="status" class="form-select">
+            <option value="" {% if not status_filter %}selected{% endif %}>状態: すべて</option>
+            <option value="未着手" {% if status_filter == "未着手" %}selected{% endif %}>未着手</option>
+            <option value="対応中" {% if status_filter == "対応中" %}selected{% endif %}>対応中</option>
+            <option value="保留" {% if status_filter == "保留" %}selected{% endif %}>保留</option>
+            <option value="完了" {% if status_filter == "完了" %}selected{% endif %}>完了</option>
+        </select>
+    </div>
+    <div class="col-6 col-md-2">
+        <select name="priority" class="form-select">
+            <option value="" {% if not priority %}selected{% endif %}>優先度: すべて</option>
+            <option value="重要" {% if priority == "重要" %}selected{% endif %}>重要</option>
+            <option value="高" {% if priority == "高" %}selected{% endif %}>高</option>
+            <option value="中" {% if priority == "中" %}selected{% endif %}>中</option>
+            <option value="低" {% if priority == "低" %}selected{% endif %}>低</option>
+        </select>
+    </div>
+    <div class="col-6 col-md-2 d-flex align-items-center">
+        <div class="form-check">
+            <input
+                type="checkbox"
+                name="overdue"
+                value="true"
+                class="form-check-input"
+                id="overdueCheck"
+                {% if overdue %}checked{% endif %}
+            >
+            <label class="form-check-label" for="overdueCheck">期限切れのみ</label>
+        </div>
+    </div>
+    <div class="col-6 col-md-2">
+        <button type="submit" class="btn btn-outline-secondary w-100">検索</button>
+    </div>
+</form>
+
 {% if items %}
 <!-- PC表示: テーブル -->
 <div class="d-none d-md-block">
@@ -73,6 +119,6 @@
 
 <p class="text-muted mt-3">全{{ total }}件</p>
 {% else %}
-<p class="text-muted">タスクがまだ登録されていません。</p>
+<p class="text-muted">条件に一致するタスクがありません。</p>
 {% endif %}
 {% endblock %}
