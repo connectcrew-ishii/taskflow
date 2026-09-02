@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import ValidationError
 
 from app.dependencies import get_task_service
+from app.error_messages import build_field_errors
 from app.schemas import TaskCreate, TaskUpdate
 from app.services import TaskNotFoundError, TaskService
 from app.templating import templates
@@ -62,7 +63,9 @@ def task_list_page(
 def new_task_form(request: Request) -> HTMLResponse:
     """タスク登録フォームを表示する。"""
     return templates.TemplateResponse(
-        request, "task_form.html", {"mode": "create", "errors": [], "values": {}}
+        request,
+        "task_form.html",
+        {"mode": "create", "field_errors": {}, "values": {}},
     )
 
 
@@ -91,7 +94,7 @@ def create_task_from_form(
             "task_form.html",
             {
                 "mode": "create",
-                "errors": exc.errors(),
+                "field_errors": build_field_errors(exc.errors()),
                 "values": {
                     "title": title,
                     "description": description,
@@ -126,7 +129,7 @@ def edit_task_form(
         "task_edit.html",
         {
             "task_id": task.id,
-            "errors": [],
+            "field_errors": {},
             "values": {
                 "title": task.title,
                 "description": task.description or "",
@@ -164,7 +167,7 @@ def update_task_from_form(
             "task_edit.html",
             {
                 "task_id": task_id,
-                "errors": exc.errors(),
+                "field_errors": build_field_errors(exc.errors()),
                 "values": {
                     "title": title,
                     "description": description,
