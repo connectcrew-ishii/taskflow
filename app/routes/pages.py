@@ -1,8 +1,10 @@
 """HTML画面用のルーター。"""
-from fastapi import APIRouter, Depends, Query, Request
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Depends, Form, Query, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
+from pydantic import ValidationError
 
 from app.dependencies import get_task_service
+from app.schemas import TaskCreate
 from app.services import TaskService
 from app.templating import templates
 
@@ -54,3 +56,52 @@ def task_list_page(
             "overdue": overdue,
         },
     )
+
+
+@router.get("/tasks-list/new", response_class=HTMLResponse)
+def new_task_form(request: Request) -> HTMLResponse:
+    """タスク登録フォームを表示する。"""
+    return templates.TemplateResponse(
+        request, "task_form.html", {"mode": "create", "errors": [], "values": {}}
+    )
+
+
+@router.post("/tasks-list/new")
+def create_task_from_form(
+    request: Request,
+    title: str = Form(default=""),
+    description: str = Form(default=""),
+    priority: str = Form(default="中"),
+    status_value: str = Form(default="未着手", alias="status"),
+    due_date: str = Form(default=""),
+    service: TaskService = Depends(get_task_service),
+):
+    """フォーム入力からタスクを登録し、一覧画面へリダイレクトする。"""
+    try:
+        data = TaskCreate(
+            title=title,
+            description=description or None,
+            priority=priority,
+            status=status_value,
+            due_date=due_date or None,
+        )
+    except ValidationError as exc:
+        return templates.TemplateResponse(
+            request,
+            "task_form.html",
+            {
+                "mode": "create",
+                "errors": exc.errors(),
+                "values": {
+                    "title": title,
+                    "description": description,
+                    "priority": priority,
+                    "status": status_value,
+                    "due_date": due_date,
+                },
+            },
+            status_code=422,
+        )
+
+    service.create_task(data)
+    return RedirectResponse(url="/tasks-list", status_code=303)

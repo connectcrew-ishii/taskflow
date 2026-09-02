@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}タスク登録 - TaskFlow{% endblock %}
+{% block content %}
+<h1 class="mb-4">新規タスク登録</h1>
+
+{% if errors %}
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        {% for error in errors %}
+        <li>{{ error.msg }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<form method="post" action="/tasks-list/new">
+    <div class="mb-3">
+        <label for="title" class="form-label">タイトル <span class="text-danger">*</span></label>
+        <input
+            type="text"
+            id="title"
+            name="title"
+            class="form-control"
+            maxlength="100"
+            value="{{ values.title or '' }}"
+            required
+        >
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">説明</label>
+        <textarea
+            id="description"
+            name="description"
+            class="form-control"
+            rows="4"
+            maxlength="5000"
+        >{{ values.description or '' }}</textarea>
+    </div>
+    <div class="row mb-3">
+        <div class="col-6">
+            <label for="priority" class="form-label">優先度</label>
+            <select id="priority" name="priority" class="form-select">
+                {% set current_priority = values.priority or "中" %}
+                <option value="重要" {% if current_priority == "重要" %}selected{% endif %}>重要</option>
+                <option value="高" {% if current_priority == "高" %}selected{% endif %}>高</option>
+                <option value="中" {% if current_priority == "中" %}selected{% endif %}>中</option>
+                <option value="低" {% if current_priority == "低" %}selected{% endif %}>低</option>
+            </select>
+        </div>
+        <div class="col-6">
+            <label for="status" class="form-label">状態</label>
+            <select id="status" name="status" class="form-select">
+                {% set current_status = values.status or "未着手" %}
+                <option value="未着手" {% if current_status == "未着手" %}selected{% endif %}>未着手</option>
+                <option value="対応中" {% if current_status == "対応中" %}selected{% endif %}>対応中</option>
+                <option value="保留" {% if current_status == "保留" %}selected{% endif %}>保留</option>
+                <option value="完了" {% if current_status == "完了" %}selected{% endif %}>完了</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-4">
+        <label for="due_date" class="form-label">期限</label>
+        <input
+            type="date"
+            id="due_date"
+            name="due_date"
+            class="form-control"
+            value="{{ values.due_date or '' }}"
+        >
+    </div>
+    <button type="submit" class="btn btn-primary">保存</button>
+    <a href="/tasks-list" class="btn btn-outline-secondary">キャンセル</a>
+</form>
+{% endblock %}
