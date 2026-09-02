@@ -75,7 +75,7 @@
                 <td>{{ task.due_date if task.due_date else "-" }}</td>
                 <td>{{ task.updated_at.strftime("%Y-%m-%d") }}</td>
                 <td>
-                    <a
+                    
                         href="/tasks-list/{{ task.id }}/edit"
                         class="btn btn-sm btn-outline-primary"
                     >編集</a>
@@ -83,6 +83,7 @@
                         type="button"
                         class="btn btn-sm btn-outline-danger"
                         data-task-id="{{ task.id }}"
+                        data-task-title="{{ task.title }}"
                     >削除</button>
                 </td>
             </tr>
@@ -103,7 +104,7 @@
             <p class="card-text text-muted mb-3">
                 期限: {{ task.due_date if task.due_date else "-" }}
             </p>
-            <a
+            
                 href="/tasks-list/{{ task.id }}/edit"
                 class="btn btn-sm btn-outline-primary"
             >編集</a>
@@ -111,6 +112,7 @@
                 type="button"
                 class="btn btn-sm btn-outline-danger"
                 data-task-id="{{ task.id }}"
+                data-task-title="{{ task.title }}"
             >削除</button>
         </div>
     </div>
@@ -121,4 +123,39 @@
 {% else %}
 <p class="text-muted">条件に一致するタスクがありません。</p>
 {% endif %}
+
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">タスクを削除しますか？</h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="閉じる"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0" id="deleteConfirmTaskTitle"></p>
+                <p class="text-muted small mt-2 mb-0">この操作は元に戻せません。</p>
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    data-bs-dismiss="modal"
+                >キャンセル</button>
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    id="deleteConfirmButton"
+                >削除する</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/task_delete.js"></script>
 {% endblock %}
