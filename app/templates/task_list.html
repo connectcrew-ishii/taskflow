@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}タスク一覧 - TaskFlow{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">タスク一覧</h1>
+    <a href="/tasks-list/new" class="btn btn-primary">+ 新規登録</a>
+</div>
+
+{% if items %}
+<!-- PC表示: テーブル -->
+<div class="d-none d-md-block">
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>タイトル</th>
+                <th>優先度</th>
+                <th>状態</th>
+                <th>期限</th>
+                <th>更新日</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in items %}
+            <tr>
+                <td>{{ task.title }}</td>
+                <td>{{ task.priority }}</td>
+                <td>{{ task.status }}</td>
+                <td>{{ task.due_date if task.due_date else "-" }}</td>
+                <td>{{ task.updated_at.strftime("%Y-%m-%d") }}</td>
+                <td>
+                    
+                        href="/tasks-list/{{ task.id }}/edit"
+                        class="btn btn-sm btn-outline-primary"
+                    >編集</a>
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        data-task-id="{{ task.id }}"
+                    >削除</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- スマホ表示: カード -->
+<div class="d-md-none">
+    {% for task in items %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ task.title }}</h5>
+            <p class="card-text mb-1">
+                優先度: {{ task.priority }} / 状態: {{ task.status }}
+            </p>
+            <p class="card-text text-muted mb-3">
+                期限: {{ task.due_date if task.due_date else "-" }}
+            </p>
+            
+                href="/tasks-list/{{ task.id }}/edit"
+                class="btn btn-sm btn-outline-primary"
+            >編集</a>
+            <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                data-task-id="{{ task.id }}"
+            >削除</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<p class="text-muted mt-3">全{{ total }}件</p>
+{% else %}
+<p class="text-muted">タスクがまだ登録されていません。</p>
+{% endif %}
+{% endblock %}

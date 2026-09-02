@@ -20,3 +20,15 @@ def dashboard(
     return templates.TemplateResponse(
         request, "dashboard.html", {"counts": counts, "upcoming": upcoming}
     )
+
+
+@router.get("/tasks-list", response_class=HTMLResponse)
+def task_list_page(
+    request: Request,
+    service: TaskService = Depends(get_task_service),
+) -> HTMLResponse:
+    """タスク一覧画面を表示する。"""
+    items, total = service.list_tasks(limit=100, offset=0)
+    return templates.TemplateResponse(
+        request, "task_list.html", {"items": items, "total": total}
+    )
