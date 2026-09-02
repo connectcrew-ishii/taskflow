@@ -75,7 +75,7 @@
                 <td>{{ task.due_date if task.due_date else "-" }}</td>
                 <td>{{ task.updated_at.strftime("%Y-%m-%d") }}</td>
                 <td>
-                    
+                    <a
                         href="/tasks-list/{{ task.id }}/edit"
                         class="btn btn-sm btn-outline-primary"
                     >編集</a>
@@ -104,7 +104,7 @@
             <p class="card-text text-muted mb-3">
                 期限: {{ task.due_date if task.due_date else "-" }}
             </p>
-            
+            <a
                 href="/tasks-list/{{ task.id }}/edit"
                 class="btn btn-sm btn-outline-primary"
             >編集</a>
