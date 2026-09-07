@@ -51,6 +51,20 @@
 - `alembic/`: DBマイグレーション
 - `docs/`: ドキュメント・スクリーンショット
 
+## Dockerでの起動（推奨）
+
+Docker Desktopがインストールされていれば、以下のコマンドだけで起動できます。
+
+```bash
+docker compose up --build
+```
+
+起動後、ブラウザで `http://localhost:8000/` を開いてください。停止する場合は以下を実行します。
+
+```bash
+docker compose down
+```
+
 ## セットアップ・起動手順
 
 ### 1. リポジトリを取得する
