@@ -40,18 +40,8 @@
 | CI | GitHub Actions |
 
 ## ディレクトリ構成
-app/
-routes/ # HTTP入出力と依存注入
-services/ # 業務ロジック・例外変換
-repositories/ # DBアクセス
-models/ # SQLAlchemyモデル
-schemas/ # Pydanticスキーマ
-templates/ # Jinja2テンプレート
-static/ # 静的ファイル(CSS/JS)
-tests/ # pytestテスト
-alembic/ # DBマイグレーション
-docs/ # ドキュメント・スクリーンショット
 
+app/routes/ が HTTP入出力と依存注入、app/services/ が業務ロジック・例外変換、app/repositories/ がDBアクセス、app/models/ がSQLAlchemyモデル、app/schemas/ がPydanticスキーマ、app/templates/ がJinja2テンプレート、app/static/ が静的ファイル(CSS/JS)を扱います。tests/ にpytestテスト、alembic/ にDBマイグレーション、docs/ にドキュメント・スクリーンショットを配置しています。
 
 ## セットアップ・起動手順
 
