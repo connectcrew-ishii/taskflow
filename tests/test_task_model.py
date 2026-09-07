@@ -1,4 +1,5 @@
 """Taskモデルのテスト。"""
+
 from datetime import date
 
 from sqlalchemy import create_engine

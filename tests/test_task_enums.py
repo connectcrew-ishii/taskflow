@@ -1,4 +1,5 @@
 """priority/status列挙型の検証テスト。"""
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session

@@ -1,4 +1,5 @@
 """Taskモデルの定義。"""
+
 from datetime import UTC, date, datetime
 from uuid import uuid4
 
@@ -19,9 +20,7 @@ class Task(Base):
 
     __tablename__ = "task"
 
-    id: Mapped[str] = mapped_column(
-        String(36), primary_key=True, default=lambda: str(uuid4())
-    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     priority: Mapped[str] = mapped_column(
@@ -31,9 +30,7 @@ class Task(Base):
         String(10), nullable=False, default=TaskStatus.NOT_STARTED.value, index=True
     )
     due_date: Mapped[date | None] = mapped_column(Date, nullable=True, index=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, nullable=False, default=_utc_now
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=_utc_now)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, default=_utc_now, onupdate=_utc_now
     )

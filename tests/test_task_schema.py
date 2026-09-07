@@ -1,4 +1,5 @@
 """Task Pydanticスキーマのテスト。"""
+
 from datetime import date
 
 import pytest

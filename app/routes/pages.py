@@ -1,4 +1,5 @@
 """HTML画面用のルーター。"""
+
 from fastapi import APIRouter, Depends, Form, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import ValidationError
@@ -120,9 +121,7 @@ def edit_task_form(
     try:
         task = service.get_task(task_id)
     except TaskNotFoundError:
-        return HTMLResponse(
-            content="<h1>タスクが見つかりません</h1>", status_code=404
-        )
+        return HTMLResponse(content="<h1>タスクが見つかりません</h1>", status_code=404)
 
     return templates.TemplateResponse(
         request,
@@ -182,8 +181,6 @@ def update_task_from_form(
     try:
         service.update_task(task_id, data)
     except TaskNotFoundError:
-        return HTMLResponse(
-            content="<h1>タスクが見つかりません</h1>", status_code=404
-        )
+        return HTMLResponse(content="<h1>タスクが見つかりません</h1>", status_code=404)
 
     return RedirectResponse(url="/tasks-list", status_code=303)

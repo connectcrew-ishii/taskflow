@@ -4,6 +4,7 @@
 技術スタックに含まれていないため、ブラウザでの目視確認で行う。
 このテストではモーダルの構造とJSファイルの内容を確認する。
 """
+
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -74,7 +75,7 @@ def test_task_list_loads_delete_confirmation_script():
 
     response = client.get("/tasks-list")
 
-    assert '/static/js/task_delete.js' in response.text
+    assert "/static/js/task_delete.js" in response.text
 
     app.dependency_overrides.clear()
 

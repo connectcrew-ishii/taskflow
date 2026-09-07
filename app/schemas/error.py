@@ -1,4 +1,5 @@
 """エラー応答用のPydanticスキーマ。"""
+
 from pydantic import BaseModel
 
 

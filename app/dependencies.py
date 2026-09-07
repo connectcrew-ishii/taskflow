@@ -1,4 +1,5 @@
 """ルーター間で共有する依存注入関数。"""
+
 from fastapi import Depends
 from sqlalchemy.orm import Session
 

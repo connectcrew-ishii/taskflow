@@ -1,4 +1,5 @@
 """TaskServiceの検索・フィルタ・ソート・集計機能の単体テスト。"""
+
 from datetime import date, timedelta
 
 from sqlalchemy import create_engine
@@ -58,9 +59,7 @@ def test_list_tasks_filters_by_overdue():
     """list_tasksがoverdueで絞り込める。"""
     service = _make_service()
     yesterday = date.today() - timedelta(days=1)
-    service.create_task(
-        TaskCreate(title="期限切れ", due_date=yesterday, status="対応中")
-    )
+    service.create_task(TaskCreate(title="期限切れ", due_date=yesterday, status="対応中"))
     service.create_task(TaskCreate(title="期限なし"))
 
     items, total = service.list_tasks(limit=10, offset=0, overdue=True)
@@ -111,15 +110,9 @@ def test_get_upcoming_tasks_excludes_completed_and_sorts_by_due_date():
     """get_upcoming_tasksが完了済みを除外し、期限が近い順に返す。"""
     service = _make_service()
     today = date.today()
-    service.create_task(
-        TaskCreate(title="完了済み", due_date=today, status="完了")
-    )
-    service.create_task(
-        TaskCreate(title="近い", due_date=today + timedelta(days=1))
-    )
-    service.create_task(
-        TaskCreate(title="遠い", due_date=today + timedelta(days=5))
-    )
+    service.create_task(TaskCreate(title="完了済み", due_date=today, status="完了"))
+    service.create_task(TaskCreate(title="近い", due_date=today + timedelta(days=1)))
+    service.create_task(TaskCreate(title="遠い", due_date=today + timedelta(days=5)))
 
     items = service.get_upcoming_tasks(limit=5)
 
@@ -131,9 +124,7 @@ def test_get_upcoming_tasks_respects_limit():
     service = _make_service()
     today = date.today()
     for i in range(5):
-        service.create_task(
-            TaskCreate(title=f"タスク{i + 1}", due_date=today + timedelta(days=i))
-        )
+        service.create_task(TaskCreate(title=f"タスク{i + 1}", due_date=today + timedelta(days=i)))
 
     items = service.get_upcoming_tasks(limit=2)
 

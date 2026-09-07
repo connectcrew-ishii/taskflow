@@ -1,4 +1,5 @@
 """タスク編集画面(GET/POST /tasks-list/{task_id}/edit)のテスト。"""
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -32,15 +33,13 @@ def _make_client() -> TestClient:
 def test_edit_form_returns_200_with_existing_values():
     """編集フォームに既存値が表示される。"""
     client = _make_client()
-    created = client.post(
-        "/tasks", json={"title": "設計書を書く", "priority": "高"}
-    ).json()
+    created = client.post("/tasks", json={"title": "設計書を書く", "priority": "高"}).json()
 
     response = client.get(f"/tasks-list/{created['id']}/edit")
 
     assert response.status_code == 200
     assert 'value="設計書を書く"' in response.text
-    assert 'selected' in response.text
+    assert "selected" in response.text
 
     app.dependency_overrides.clear()
 

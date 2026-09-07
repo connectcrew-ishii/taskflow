@@ -1,4 +1,5 @@
 """TaskのDBアクセスを担当するリポジトリ。"""
+
 from __future__ import annotations
 
 from datetime import date
@@ -70,9 +71,7 @@ class TaskRepository:
         if overdue:
             today = date.today()
             overdue_condition = (
-                (Task.due_date.is_not(None))
-                & (Task.due_date < today)
-                & (Task.status != "完了")
+                (Task.due_date.is_not(None)) & (Task.due_date < today) & (Task.status != "完了")
             )
             base_stmt = base_stmt.where(overdue_condition)
             count_stmt = count_stmt.where(overdue_condition)
@@ -167,9 +166,7 @@ class TaskRepository:
         """
         counts = {s.value: 0 for s in TaskStatus}
 
-        rows = self._db.execute(
-            select(Task.status, func.count()).group_by(Task.status)
-        ).all()
+        rows = self._db.execute(select(Task.status, func.count()).group_by(Task.status)).all()
         for status_value, count in rows:
             counts[status_value] = count
 

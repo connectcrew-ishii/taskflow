@@ -1,4 +1,5 @@
 """疎通確認用のヘルスチェックルーター。"""
+
 from fastapi import APIRouter
 
 router = APIRouter()

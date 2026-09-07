@@ -1,4 +1,5 @@
 """Alembicマイグレーション実行環境の設定。"""
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool

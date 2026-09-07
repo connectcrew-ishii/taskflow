@@ -1,4 +1,5 @@
 """TaskRepository.listのソート機能テスト。"""
+
 from datetime import date, timedelta
 
 from sqlalchemy import create_engine

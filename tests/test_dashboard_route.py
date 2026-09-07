@@ -1,4 +1,5 @@
 """GET / (ダッシュボード画面)のテスト。"""
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -62,9 +63,7 @@ def test_dashboard_shows_all_four_status_counts():
 def test_dashboard_shows_upcoming_task_title():
     """期限が近いタスクのタイトルが表示される。"""
     client = _make_client()
-    client.post(
-        "/tasks", json={"title": "重要な会議準備", "due_date": "2026-12-31"}
-    )
+    client.post("/tasks", json={"title": "重要な会議準備", "due_date": "2026-12-31"})
 
     response = client.get("/")
 

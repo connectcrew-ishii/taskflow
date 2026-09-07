@@ -1,4 +1,5 @@
 """Task関連のAPIルーター。"""
+
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -9,9 +10,7 @@ from app.services import TaskNotFoundError, TaskService
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
-SortOption = Literal[
-    "created_at_desc", "created_at_asc", "due_date_asc", "priority_asc"
-]
+SortOption = Literal["created_at_desc", "created_at_asc", "due_date_asc", "priority_asc"]
 
 
 @router.get("", response_model=TaskListResponse)
@@ -66,9 +65,7 @@ def get_task(
     try:
         return service.get_task(task_id)
     except TaskNotFoundError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
-        ) from exc
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 
 @router.put("/{task_id}", response_model=Task)
@@ -81,9 +78,7 @@ def update_task(
     try:
         return service.update_task(task_id, data)
     except TaskNotFoundError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
-        ) from exc
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -95,6 +90,4 @@ def delete_task(
     try:
         service.delete_task(task_id)
     except TaskNotFoundError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
-        ) from exc
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc

@@ -1,4 +1,5 @@
 """共通レイアウトテンプレート(base.html)の構造テスト。"""
+
 from pathlib import Path
 
 BASE_HTML = Path("app/templates/base.html").read_text(encoding="utf-8")

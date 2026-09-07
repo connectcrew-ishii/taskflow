@@ -1,4 +1,5 @@
 """TaskRepositoryのダッシュボード集計機能のテスト。"""
+
 from datetime import date, timedelta
 
 from sqlalchemy import create_engine

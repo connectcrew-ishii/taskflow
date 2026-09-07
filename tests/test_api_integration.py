@@ -1,4 +1,5 @@
 """複数エンドポイントを横断するAPI統合テスト。"""
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -92,12 +93,8 @@ def test_full_task_lifecycle_across_all_endpoints():
 def test_search_and_filter_endpoints_work_together():
     """検索・一覧・フィルタの各エンドポイントが組み合わせても正しく動作する。"""
     client = _make_client()
-    client.post(
-        "/tasks", json={"title": "API設計書", "priority": "高", "status": "対応中"}
-    )
-    client.post(
-        "/tasks", json={"title": "読書", "priority": "低", "status": "完了"}
-    )
+    client.post("/tasks", json={"title": "API設計書", "priority": "高", "status": "対応中"})
+    client.post("/tasks", json={"title": "読書", "priority": "低", "status": "完了"})
 
     search_response = client.get("/tasks/search?q=API")
     assert search_response.status_code == 200
@@ -124,9 +121,7 @@ def test_all_primary_status_codes_are_confirmed_across_api():
     # 200: 一覧・詳細・更新
     assert client.get("/tasks").status_code == 200
     assert client.get(f"/tasks/{task_id}").status_code == 200
-    assert (
-        client.put(f"/tasks/{task_id}", json={"title": "更新後"}).status_code == 200
-    )
+    assert client.put(f"/tasks/{task_id}", json={"title": "更新後"}).status_code == 200
 
     # 422: 不正な登録
     assert client.post("/tasks", json={"title": ""}).status_code == 422

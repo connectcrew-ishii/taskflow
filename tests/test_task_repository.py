@@ -1,4 +1,5 @@
 """TaskRepository一覧取得のテスト。"""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 

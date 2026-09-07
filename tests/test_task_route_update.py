@@ -1,4 +1,5 @@
 """PUT /tasks/{task_id} APIのテスト。"""
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -94,9 +95,7 @@ def test_update_task_returns_422_for_invalid_status():
     client = _make_client()
     created = client.post("/tasks", json={"title": "タスク"}).json()
 
-    response = client.put(
-        f"/tasks/{created['id']}", json={"title": "タスク", "status": "不明"}
-    )
+    response = client.put(f"/tasks/{created['id']}", json={"title": "タスク", "status": "不明"})
 
     assert response.status_code == 422
 

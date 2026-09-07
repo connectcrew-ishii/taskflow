@@ -1,4 +1,5 @@
 """Taskの業務ロジックを担当するサービス。"""
+
 from app.models import Task
 from app.repositories import TaskRepository
 from app.schemas import TaskCreate, TaskUpdate

@@ -1,4 +1,5 @@
 """priority/statusの列挙型定義。"""
+
 from enum import StrEnum
 
 
