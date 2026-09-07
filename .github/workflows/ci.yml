@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Pythonをセットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: 依存関係をインストール
+        run: pip install -e ".[dev]"
+
+      - name: Ruffでlintチェック
+        run: ruff check .
+
+      - name: Blackでformatチェック
+        run: black --check .
+
+      - name: pytestでテスト実行
+        run: pytest tests/ -v
